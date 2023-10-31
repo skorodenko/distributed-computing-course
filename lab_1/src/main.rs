@@ -1,5 +1,7 @@
 use std::{thread};
 use std::sync::{Arc, Mutex};
+use thread_priority::*;
+
 
 fn increment(refr: &Arc<Mutex<i32>>) {
     let arc = Arc::clone(&refr);
@@ -18,8 +20,8 @@ fn main() {
     
     let increment_shared = shared.clone();
     let handle_increment = thread::spawn(move || {
+        //assert!(set_current_thread_priority(ThreadPriority::Min).is_ok());
         loop {
-            //thread::sleep(Duration::from_secs(1));           
             increment(&increment_shared);
             let num = increment_shared.lock().unwrap();
             println!("Incerment thread :: {num}");
@@ -28,8 +30,8 @@ fn main() {
     
     let decrement_shared = shared.clone();
     let handle_decrement = thread::spawn(move || {
+        //assert!(set_current_thread_priority(ThreadPriority::Min).is_ok());
         loop {
-            //thread::sleep(Duration::from_secs(1));           
             decrement(&decrement_shared);
             let num = decrement_shared.lock().unwrap();
             println!("Decrement thread :: {num}");

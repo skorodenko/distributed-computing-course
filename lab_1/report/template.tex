@@ -1,0 +1,89 @@
+% ******** Приклад оформлення документа за ДСТУ 3008-95 ********
+% ******************** автор: Тавров Д. Ю. *********************
+
+% зазначаємо стильовий файл, який будемо використовувати
+\documentclass{udstu}
+
+% починаємо верстку документа
+\begin{document}
+
+% створимо титульний аркуш
+% за допомогою спеціальної команди
+% \maketitlepage{params},
+% де params --- це розділені комами пари "параметр={значення}"
+\maketitlepage{
+% StudentName --- прізвище, ініціали студента
+	StudentName={Скорденко Д. О.},
+% StudentMale --- стать студента (true, якщо чоловік, false --- якщо жінка)
+	StudentMale=true,
+% StudentGroup --- група студента
+	StudentGroup={КМ-01},
+% Title --- назва
+	Title={Звіт\\із лабораторної роботи №1\\із дисципліни \invcommas{Розподілені і хмарні обчислення}},
+% SupervisorDegree --- науковий ступінь, учене звання керівника роботи
+% якщо наукового ступеня немає, можна відповідний рядочок пропустити
+	SupervisorDegree={доцент кафедри ПМА},
+% SupervisorName --- прізвище, ініціали керівника роботи
+	SupervisorName={Ліскін В. О.}
+}
+
+% створюємо зміст
+\tableofcontents
+
+% створюємо вступ
+\intro
+
+\paragraph{\textbf{Мета:}} навчитись працювати із примітивом thread (потоком)
+
+% створюємо перший розділ роботи
+\chapter{Основна частина}
+\label{chap:1}
+
+\paragraph{\textbf{Опис програми:}}
+
+Для демонстрації роботи із потоками буде реалізовано програму інкремент/декримент.
+Кожна із операцій буде виконуватись в окремому потоці.
+
+
+\chapter{Опис програми [Тестовий приклад]}
+\label{chap:3}
+
+Всі результати наводять роботу програми протягом 1-2 секунд.
+
+\begin{figure}[!htp]
+	\centering
+	\includegraphics[scale=0.5]{PNG/no-prior.png}
+	\caption{Відсутній пріорітет}
+	\label{fig:figure1}
+\end{figure}
+
+\begin{figure}[!htp]
+	\centering
+	\includegraphics[scale=0.5]{PNG/min-prior-increment.png}
+	\caption{Мінімальний пріорітет інкременту}
+	\label{fig:figure1}
+\end{figure}
+
+\begin{figure}[!htp]
+	\centering
+	\includegraphics[scale=0.5]{PNG/min-prior-decrement.png}
+	\caption{Мінімальний пріорітет декременту}
+	\label{fig:figure1}
+\end{figure}
+
+% створюємо Висновки
+\conclusions
+
+Було реалізовано програму інкремент/декремент для демонстрації роботи потоків та їх пріоритезації.
+
+\append{Код лістінги}
+
+\paragraph{\textsc{*Примітка:}}
+У код лістингах при копіюванні втрачається форматування (не копіюються пробіли).
+Файли прикріплено до цього pdf (вкладка "прикріплені файли").
+
+\captionof{listing}{main.rs}
+\embedfile[filespec=main.rs]{../src/main.rs}
+\inputminted{rust}{../src/main.rs}
+
+\end{document}
