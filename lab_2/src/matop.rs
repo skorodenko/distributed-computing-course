@@ -1,4 +1,3 @@
-use std::{sync::{Arc, Mutex}, rc::Rc, cell::RefCell};
 use rayon::prelude::*;
 use nalgebra::{DMatrix};
 
@@ -48,35 +47,18 @@ pub fn matmul(m1: &DMatrix<f64>, m2: &DMatrix<f64>) -> DMatrix<f64> {
 
 
 pub fn matelsum_paralel(m: &DMatrix<f64>) -> f64 {
-    let a = Arc::new(Mutex::new(0.0));
     let shape = m.shape();
-
-    let _a = a.clone();
-    (0..shape.0).into_par_iter().for_each(move |i| {
-        let _a = _a.clone();
-        (0..shape.1).into_par_iter().for_each(move |j| {
-            let mut sum = _a.lock().unwrap();
-            *sum += m.index((i,j)); 
-        })
-    });
     
-    let res = *a.lock().unwrap();
-    res
+    (0..shape.0).into_par_iter().map(|i| {
+        m.row(i).sum()
+    }).reduce(|| 0.0, |a,b| a + b)
 }
 
 
 pub fn matelsum(m: &DMatrix<f64>) -> f64 {
-    let a = Rc::new(RefCell::new(0.0));
     let shape = m.shape();
 
-    let _a = a.clone();
-    let _ = (0..shape.0).into_iter().for_each(move |i| {
-        let _a = _a.clone();
-        (0..shape.1).into_iter().for_each(move |j| {
-            *_a.borrow_mut() += m.index((i,j)); 
-        })
-    });
-    
-    let res = *a.borrow();
-    res
+    (0..shape.0).into_iter().map(|i| {
+        m.row(i).sum()
+    }).reduce(|a,b| a + b).unwrap() 
 }

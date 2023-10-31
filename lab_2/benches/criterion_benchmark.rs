@@ -5,10 +5,9 @@ use lab_2::matop::{matmul, matmul_paralel, matelsum, matelsum_paralel};
 
 fn bench_matmul(c: &mut Criterion) {
     let mut group = c.benchmark_group("Matmul");
-    for (a, b) in [(150,190)] {
+    for (a, b) in [(150,150)] {
         let m1 = DMatrix::<f64>::new_random(a, b);
         let m2 = DMatrix::<f64>::new_random(b, a);
-        group.sample_size(10);
         group.bench_with_input(
             BenchmarkId::new("SingleThread", a),
             &(&m1, &m2),|b, inp| b.iter(|| matmul(inp.0, inp.1)) 
@@ -24,9 +23,8 @@ fn bench_matmul(c: &mut Criterion) {
 
 fn bench_matelsum(c: &mut Criterion) {
     let mut group = c.benchmark_group("Matelsum");
-    for (a, b) in [(300,350)] {
+    for (a, b) in [(1000,1000)] {
         let m = DMatrix::<f64>::new_random(a, b);
-        group.sample_size(10);
         group.bench_with_input(
             BenchmarkId::new("SingleThread", a),
             &m,|b, inp| b.iter(|| matelsum(inp)) 
