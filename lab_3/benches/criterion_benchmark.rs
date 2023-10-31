@@ -9,19 +9,21 @@ fn bench_integral_reduction(c: &mut Criterion) {
     let b = PI/2.0;
 
     let mut group = c.benchmark_group("Multithread integration");
-    group.sample_size(10);
 
-    for isteps in [64, 100000, 10000000] {
-        let af = Arc::new(f);
-        let signature = format!("f=(1/sin(2x)^2), a={}, b={}, steps={}", a, b, isteps);
-        let args = (&af, a, b, isteps);
-        group.bench_with_input(
-            BenchmarkId::from_parameter(signature),
-            &args,
-            |b, inp| {
-                b.iter(|| integral_reduction(inp.0,inp.1,inp.2,inp.3));
-            }
-        );
+    for isteps in [64, 1e5 as i32, 1e7 as i32] {
+        for nworkers in [1,2,4,8] {
+            let pool = rayon::ThreadPoolBuilder::new().num_threads(nworkers).build().unwrap();
+            let af = Arc::new(f);
+            let signature = format!("f=(1/sin(2x)^2), a={}, b={}, nsteps={}, nworkers={}", a, b, isteps, nworkers);
+            let args = (&af, a, b, isteps);
+            group.bench_with_input(
+                BenchmarkId::from_parameter(signature),
+                &args,
+                |b, inp| {
+                    b.iter(|| pool.install(|| integral_reduction(inp.0,inp.1,inp.2,inp.3)));
+                }
+            );
+        };
     };
     group.finish();
 }

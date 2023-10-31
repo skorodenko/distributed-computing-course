@@ -1,23 +1,18 @@
-use std::sync::{Arc, Mutex};
+use std::sync::{Arc};
 use std::marker::{Sync, Send};
 use rayon::prelude::*;
 
 
 pub fn integral_reduction(f: &Arc<impl Fn(f64) -> f64 + Sync + Send>, a: f64, b: f64, steps: i32) -> f64 {
-    let result = Arc::new(Mutex::new(0.0));
     let dx = (b - a) / steps as f64;
 
-    let _result = result.clone();
-    (0..steps).into_par_iter().for_each(move |i| {
+    (0..steps).into_par_iter().map(move |i| {
         let i = i as f64;
         let x = a + i * dx;
 
         let function = f(x);
-        *_result.lock().unwrap() += function * dx;
-    });
-
-    let res = *result.lock().unwrap();
-    res
+        function * dx
+    }).reduce(|| 0.0, |a,b| a + b)
 }
 
 
